@@ -1,6 +1,9 @@
 import http.client
 import json
 from collections import namedtuple
+from forecast import Forecast
+from city import City
+from base import Base, Session, engine
 
 # REFACTOR THIS TO JUST LOAD CITY COORDINATES!!!
 
@@ -13,10 +16,10 @@ CityCoord = namedtuple('CityCoord', 'lon lat')
 # or at least export from env variables - how to do that in docker?
 # this is the appid param
 #this is for the one from the assignment
-#API_KEY = '8133004a923c6f2812a3c9b28d099e08'
+API_KEY = '8133004a923c6f2812a3c9b28d099e08'
 
 #this is for weatherapi.com
-API_KEY = 'e2e4d1f7b56340179b6232406221903'
+#API_KEY = 'e2e4d1f7b56340179b6232406221903'
 
 # first obtain lon, lat
 
@@ -30,7 +33,8 @@ def get_city_coord(city):
     path = '/geo/1.0/direct?q={city_name}&limit=5&appid={API_key}'.format(city_name = city, API_key=API_KEY)
     connection.request('GET', path)
     response = connection.getresponse()
-#    print("Status: {} and reason: {} and body {}".format(response.status, response.reason, response.read()))
+    print("Status: {} and reason: {}".format(response.status, response.reason))
+    # need to fail loudly if request failed
     response_dict = json.loads(response.read())
 #    print("lon: {}, lat: {}".format(response_dict[0]['lon'], response_dict[0]['lat']))
     connection.close()
@@ -49,7 +53,15 @@ def get_forecast(city_coord):
     connection.close()
     return response_dict
 
+Base.metadata.create_all(engine)
+
+# 3 - create a new session
+session = Session()
+
 for city in CITIES:
     city_coord = get_city_coord(city)
     print(city_coord)
-    print(get_forecast(city_coord))
+    session.add(City(city, city_coord.lon, city_coord.lat))
+    # merge both insertions here to one place, it would make things easier
+session.commit()
+session.close()

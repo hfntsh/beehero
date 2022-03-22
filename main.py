@@ -1,5 +1,7 @@
 import flask
-
+import base
+from city import City
+from forecast import Forecast
 # TODO: Types!
 # TODO: unit tests
 # TODO: DB connection
@@ -20,7 +22,10 @@ app.config["DEBUG"] = True
 
 @app.route('/avg_tmp_per_city_per_day', methods=['GET'])
 def avg_tmp_per_city_per_day():
-    return "So you want avg tmp per city per day, huh?"
+    session = base.Session()
+    cities = session.query(City).all()
+    city_names = [city.name for city in cities]
+    return ', '.join(city_names)
 
 
 @app.route('/lowest_humid', methods=['GET'])

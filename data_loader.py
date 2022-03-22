@@ -1,10 +1,13 @@
 import http.client
 import json
 from collections import namedtuple
+from city import City
+from forecast import Forecast
+from base import Base, Session, engine
 
 
 CityCoord = namedtuple('CityCoord', 'lon lat')
-Forecast = namedtuple('Forecast', 'temperature humidity feels_like')
+RawForecast = namedtuple('Forecast', 'temperature humidity feels_like')
 # connect to API
 # get data
 # load to DB
@@ -35,10 +38,23 @@ def get_forecast(city):
     output_dict = {}
     for day in response_dict['forecast']['forecastday']:
         for hour in day['hour']:
-            # use datetime?
-            output_dict[hour['time_epoch']] = Forecast(hour['temp_c'], hour['humidity'], hour['feelslike_c'])
+            # use datetime? YES
+            output_dict[hour['time_epoch']] = RawForecast(hour['temp_c'], hour['humidity'], hour['feelslike_c'])
     connection.close()
     return output_dict
 
+
+
+Base.metadata.create_all(engine)
+
+# 3 - create a new session
+session = Session()
+
 for city in CITIES:
-    print(get_forecast(city))
+    forecasts = get_forecast(city)
+    print(city)
+    print(forecasts)
+    for datetime, forecast in forecasts.items():
+        session.add(Forecast(, city_coord.lon, city_coord.lat))
+session.commit()
+session.close()
