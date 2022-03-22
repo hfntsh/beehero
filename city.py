@@ -15,7 +15,7 @@ class City(Base):
     name = Column(String)
     longtitude = Column(Float)
     latitude = Column(Float)
-    forecasts = relationship("Forecast")
+    forecasts = relationship('Forecast')
 
     def __init__(self, name: str, longtitude: float, latitude: float):
         self.name = name

@@ -76,7 +76,7 @@ for index, city_name in enumerate(CITIES):
     for date_string, forecast in forecasts.items():
         # There's a subtle issue here - we're storing the datetime in the timezone which we queried from.
         # probably good enough.
-        date_object = datetime.strptime(date_string, "%Y-%m-%d %H:%M")
+        date_object = datetime.strptime(date_string, '%Y-%m-%d %H:%M')
         forecast = Forecast(
             date_object.date(), date_object.time(), forecast.humidity, forecast.temperature, forecast.feels_like)
         forecast.city_id = city.id

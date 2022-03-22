@@ -12,7 +12,7 @@ from forecast import Forecast
 
 
 app = flask.Flask(__name__)
-app.config["DEBUG"] = True
+app.config['DEBUG'] = True
 Base.metadata.create_all(engine)
 
 
@@ -76,8 +76,8 @@ def feels_like_rank():
     """
     session = Session()
     # We default to ascending order, and do not fail in case we get a parameter which isn't "asc" or "desc".
-    order_dir = request.args.get("order_dir", default="asc")
-    reverse_order = order_dir == "desc"
+    order_dir = request.args.get('order_dir', default='asc')
+    reverse_order = order_dir == 'desc'
     cities = session.query(City.id, City.name).all()
     result_dict = {}
     for city_id, city_name in cities:
