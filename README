@@ -1,0 +1,30 @@
+To run:
+
+Install required packages:
+pip install flask
+pip install psycopg2
+pip install SQLAlchemy
+
+Start a Docker Postgresql:
+docker run --name local-postgres -e POSTGRES_PASSWORD=pass -e POSTGRES_USER=usr -e POSTGRES_DB=beeherotask -d -p 5432:5432 postgres
+
+Load data:
+python dataloader.py
+
+Run server:
+python main.py
+
+
+---------------------------------------------------------------------------------
+
+Approaches to testing:
+
+IMHO it's usually not worth having very thorough tests for something like the data loader since it's manually run.
+If we did want to test it, I would insert an abstraction wrapping the external REST calls, and test using a fake version
+of the wrapper. It's probably enough to have tests that produce valid JSON return values and see that they're parsed
+correctly on the other end.
+
+For the REST API, we'd probably want to have a test harness that replaced the DB connection with a connection to some
+in memory SQL (sqlite?). We'd then want to excercise the API with an empty DB, and with some DB populated with test
+values.
+
